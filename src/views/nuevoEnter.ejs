@@ -71,53 +71,11 @@ const webcam = new Webcam(webcamElement, 'user', canvasElement, snapSoundElement
 const take = document.getElementById("take");
 
 let imagePersona = new Image();
-let labelfulldes;
-let vectorDatos;
-let nameAceptado = "";
 
 Promise.all([
     faceapi.loadSsdMobilenetv1Model("/modelsML"),
-    faceapi.loadFaceLandmarkModel("/modelsML"),
-    faceapi.loadFaceRecognitionModel("/modelsML")
+    faceapi.loadFaceLandmarkModel("/modelsML")
     ]).then(async()=>{
-
-        //Mandamos una peticion para recibir los datos de los usuarios como sus imagenes
-        const data = { action: 'Pidiendo datos imagenes' };
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        };
-
-        const response = await fetch('/obteinData', options);
-        const respuesta = await response.json();
-        vectorDatos = respuesta;
-        //console.log(respuesta);
-
-        const labeledFaceDescriptors = await Promise.all(
-            respuesta.map(async label => {
-                //console.log(label);
-                
-                const imgUrl = label.image;
-                const img = await faceapi.fetchImage(imgUrl);
-
-                const fullFaceDescription = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor()
-                
-                if (!fullFaceDescription) {
-                throw new Error("No se encontro rostro para " + label.name);
-                };
-                
-                const faceDescriptors = [fullFaceDescription.descriptor];
-
-                return new faceapi.LabeledFaceDescriptors(label.id.toString(), faceDescriptors);
-            })
-        );
-
-        //guardamos para despes
-        labelfulldes = labeledFaceDescriptors;
-
         console.log('Se han cargado los modelos!!!');
         await webcam.start()
             .then(result =>{
@@ -132,63 +90,56 @@ take.addEventListener("click", async()=>{
     let picture = await webcam.snap();
     imagePersona.src = picture;
 
-    const fullFaceDescription = await faceapi.detectSingleFace(imagePersona).withFaceLandmarks().withFaceDescriptor();
-    //console.log(fullFaceDescription)          
+    const fullFaceDescription = await faceapi.detectSingleFace(imagePersona).withFaceLandmarks();  
     if (!fullFaceDescription) {
         alert('Por favor intente con otra foto!!');
     }else{
-        console.log('Se detecto un rostro en la imagen!');
-        const maxDescriptorDistance = 0.5;
-        const faceMatcher = await new faceapi.FaceMatcher(labelfulldes, maxDescriptorDistance);
+        console.log('Se ha detectado un rostro');
 
-        const result =  await faceMatcher.findBestMatch(fullFaceDescription.descriptor);
-        //console.log(result);
+        const data = {
+            image: imagePersona.src
+        };
 
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        };
 
-        console.log(result.label);
-        //nos aseguramos que el label sea valido
-        if (result.label == "unknown"){
-            alert("No se pudo reconocer al usuario dentro del sistema, por favor intente de nuevo");
+        console.log(options);
+        const response = await fetch('/addEnter', options);
+        const respuesta = await response.json();
 
-            }else{
+        console.log(respuesta);
 
-            let i=0;
-            //console.log(vectorDatos.length);
-            while (i<vectorDatos.length){
-                if (vectorDatos[i].id == result.label){
-                    nameAceptado = vectorDatos[i].name;
-                    console.log(vectorDatos[i].name);
-                    i=vectorDatos.length;
-                }
-                i = i+1;
-            }
-
-            const persona_id = result.label;
-            const data = { persona_id };
-            const options = {
+        if (respuesta.data == "unknown"){
+            alert('No se encontro coincidencia! Por favor intente con otra foto!');
+        }else{
+            const name = respuesta.data;
+            alert("Nueva Entrada Registrada Correctamente!! Bienvenido " + name);
+            speechSynthesis.speak(new SpeechSynthesisUtterance('Bienvenido '+ name));
+            
+            const data1 = { persona_id: respuesta.id };
+            const options1 = {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify(data1)
             };
 
-            const response = await fetch('/addEnter', options);
-            const respuesta = await response.json();
-            //console.log(respuesta);
-
-            alert("Nueva Entrada Registrada Correctamente!! Bienvenido " + nameAceptado);
-
-            }
+            const response1 = await fetch('/obteinData', options1);
+            const respuesta1 = await response1.json();
+            console.log(respuesta1); 
         }
 
-        if (!nameAceptado==""){
-            speechSynthesis.speak(new SpeechSynthesisUtterance('Bienvenido '+ nameAceptado));
-            nameAceptado = "";
-        }
-    
+
+            
+    }
 });
 
-})
+});
 </script>
 </html>

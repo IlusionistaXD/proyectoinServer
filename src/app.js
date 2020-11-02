@@ -19,7 +19,6 @@ app.use(morgan('dev'));
 ///prueba sincronizando tablas
 require('./models/sequalizeModel');
 
-
 // this makes moment available as a variable in every EJS page
 app.locals.moment = moment; 
 

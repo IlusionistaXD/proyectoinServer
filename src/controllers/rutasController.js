@@ -1,14 +1,43 @@
-//aqui pondremos todas las funciones
+const face_api = require('../face-api/faceapi');
+////
 const funciones = {};
-
 const { personas } = require('../models/sequalizeModel');
 const { entradas } = require('../models/sequalizeModel');
 
 ///Usuarios 
 funciones.listarUsers = async (req, res) => {
     const lista = await personas.findAll();
+
+    var transformado = [];
+    for (let i = 0; i < lista.length; i=i+1) {
+        transformado.push({
+            id: lista[i].id,
+            name: lista[i].name,
+            address: lista[i].address,
+            phone: lista[i].phone
+        });
+    }
+
     res.render('listaUsers', {
-        data: lista
+        data: transformado
+    });
+};
+
+funciones.listarEnters = async (req, res) => {
+    const result1 = await entradas.findAll();
+
+    const lista = await personas.findAll();
+    var transformado = [];
+    for (let i = 0; i < lista.length; i=i+1) {
+        transformado.push({
+            id: lista[i].id,
+            name: lista[i].name,
+        });
+    }
+
+    res.render('listaEnters', {
+        enters: result1,
+        users: transformado
     });
 };
 
@@ -21,28 +50,8 @@ funciones.addUser = async (req, res) => {
     res.json(consultados);
 };
 
-funciones.listarEnters = async (req, res) => {
-    const result1 = await entradas.findAll();
-    const result2 = await personas.findAll();
-    res.render('listaEnters', {
-        enters: result1,
-        users: result2
-    });
-};
-
 funciones.newEnter = async (req, res) => {
-    const lista = await personas.findAll();
-    res.render('nuevoEnter', {
-        data: lista
-    });
-};
-
-funciones.addEnter = async (req, res) => {
-    console.log('Recibi una respuesta');
-    console.log(req.body);
-
-    const respuesta = await entradas.create(req.body);
-    res.json(respuesta);
+    res.render('nuevoEnter');
 };
 
 funciones.deleteUser = async (req, res) => {
@@ -54,12 +63,17 @@ funciones.deleteUser = async (req, res) => {
     });
     const nuevos = await personas.findAll();
     res.redirect('/');
-}
+};
 
-funciones.obtener = async (req, res) => {
+funciones.addEnter = async (req, res) => {  
+    console.log('Funcion Controlador Reconocimiento Entro!!');
+    var i = 0;
+    var name = "";
+    var id;
+    
     const lista = await personas.findAll();
     var transformado = [];
-
+    
     for (let i = 0; i < lista.length; i=i+1) {
         transformado.push({
             id: lista[i].id,
@@ -67,9 +81,44 @@ funciones.obtener = async (req, res) => {
             image: lista[i].image.toString() //Json to 64base
         });
     }
-    res.json(transformado);
-    
-}
+
+    const respuesta = await face_api.start(req.body.image, transformado);  
+    const label = respuesta.label;
+    console.log(respuesta);
+
+
+    if (respuesta.label == "unknown") {
+        res.json({
+            data: respuesta.label
+        });
+    }else{
+        while (i<=lista.length){
+            if (lista[i].id == respuesta.label){
+                name = lista[i].name;
+                id = lista[i].id;
+                i = lista.length;
+            };
+            console.log(i);
+            i++;
+        };
+
+        /*
+        const respuestaDB = await entradas.create({ persona_id: label});
+        console.log(respuestaDB);
+        */
+        res.json({
+            data: name,
+            id : id
+        });
+    }
+};
+
+funciones.obtener = async (req, res) => {
+    console.log(req.body);
+
+    const respuesta = await entradas.create(req.body);
+    res.json(respuesta);
+};
 
 
 

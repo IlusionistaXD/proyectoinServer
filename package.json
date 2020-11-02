@@ -16,9 +16,13 @@
   "author": "Pablo Rodriguez",
   "license": "ISC",
   "dependencies": {
+    "@tensorflow/tfjs": "^2.7.0",
+    "@tensorflow/tfjs-node": "^2.7.0",
+    "canvas": "^2.6.1",
     "ejs": "^3.1.2",
     "express": "^4.17.1",
     "express-myconnection": "^1.0.4",
+    "face-api.js": "^0.22.2",
     "fs-extra": "^9.0.0",
     "moment-timezone": "^0.5.31",
     "morgan": "^1.10.0",
