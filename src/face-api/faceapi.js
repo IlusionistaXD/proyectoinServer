@@ -36,7 +36,7 @@ async function run() {
 };
 
 async function start(imagedata, lista) {
-
+    console.log('Hemos entrado al modulo de reconomiento!!!');
     let imagePersona = new canvas.Image();
     imagePersona.src = imagedata;
 

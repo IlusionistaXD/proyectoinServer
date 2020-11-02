@@ -84,6 +84,7 @@ funciones.addEnter = async (req, res) => {
 
     const respuesta = await face_api.start(req.body.image, transformado);  
     const label = respuesta.label;
+    const distance = respuesta.distance;
     console.log(respuesta);
 
 
@@ -98,30 +99,21 @@ funciones.addEnter = async (req, res) => {
                 id = lista[i].id;
                 i = lista.length;
             };
-            console.log(i);
             i++;
         };
 
-        /*
-        const respuestaDB = await entradas.create({ persona_id: label});
-        console.log(respuestaDB);
-        */
         res.json({
             data: name,
-            id : id
+            id : id,
+            distance : distance
         });
     }
 };
 
 funciones.obtener = async (req, res) => {
     console.log(req.body);
-
     const respuesta = await entradas.create(req.body);
     res.json(respuesta);
 };
-
-
-
-
 
 module.exports = funciones;
