@@ -16,8 +16,6 @@
   "author": "Pablo Rodriguez",
   "license": "ISC",
   "dependencies": {
-    "@tensorflow/tfjs": "^2.7.0",
-    "@tensorflow/tfjs-node": "^2.7.0",
     "canvas": "^2.6.1",
     "ejs": "^3.1.2",
     "express": "^4.17.1",

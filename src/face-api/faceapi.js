@@ -1,7 +1,7 @@
 const faceapi = require("face-api.js"); 
 const canvas = require("canvas");  
 const path = require("path");
-//require("@tensorflow/tfjs-node");
+//const tfjs = require("@tensorflow/tfjs-node");
 
 // mokey pathing the faceapi canvas
 const { Canvas, Image, ImageData } = canvas  
@@ -80,6 +80,7 @@ face_api.path = path;
 face_api.faceDetectionOptions = faceDetectionOptions;
 face_api.load = run;
 face_api.start = start;
+//face_api.tfjs = tfjs;
 
 run();
 
