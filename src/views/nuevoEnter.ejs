@@ -111,7 +111,6 @@ take.addEventListener("click", async()=>{
         console.log(options);
         const response = await fetch('/addEnter', options);
         const respuesta = await response.json();
-
         console.log(respuesta);
 
         if (respuesta.data == "unknown"){

@@ -25,7 +25,6 @@ funciones.listarUsers = async (req, res) => {
 
 funciones.listarEnters = async (req, res) => {
     const result1 = await entradas.findAll();
-
     const lista = await personas.findAll();
     var transformado = [];
     for (let i = 0; i < lista.length; i=i+1) {

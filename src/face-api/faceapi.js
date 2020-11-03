@@ -57,6 +57,8 @@ async function start(imagedata, lista) {
         })
     );
 
+    console.log(labeledFaceDescriptors);
+
     const resultImage = await faceapi.detectSingleFace(imagePersona, faceDetectionOptions)
     .withFaceLandmarks().withFaceDescriptor();
 
