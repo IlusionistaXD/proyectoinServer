@@ -10,8 +10,6 @@ _Objetivo: Diseñar e implementar un sistema basado en reconocimiento facial don
 
 ## Uso o instalacion 📋
 
-_- El proyecto esta actualmente funcionando en la pagina de https://proyectopablo.herokuapp.com/_
-
 _- Si quiere ejecutar el programa en su computadora, debe hacer las configuraciones necesarias en el archivo de src/config/db.config.js y luego ejecutar el comando:_
 
 
