@@ -32,7 +32,7 @@ funciones.listarEnters = async (req, res) => {
             id: lista[i].id,
             name: lista[i].name,
         });
-    }
+    };
 
     res.render('listaEnters', {
         enters: result1,
@@ -65,24 +65,12 @@ funciones.deleteUser = async (req, res) => {
 };
 
 funciones.addEnter = async (req, res) => {  
-    console.log('Funcion Controlador Reconocimiento Entro!!');
     var i = 0;
-    var name = "";
-    var id;
-    
     const lista = await personas.findAll();
-    var transformado = [];
-    
-    for (let i = 0; i < lista.length; i=i+1) {
-        transformado.push({
-            id: lista[i].id,
-            name: lista[i].name,
-            image: lista[i].image.toString() //Json to 64base
-        });
-    }
+    const muestrasDescriptors = face_api.saveMuestras;
 
-    const respuesta = await face_api.start(req.body.image, transformado);  
-    const label = respuesta.label;
+    const respuesta = await face_api.start(req.body.image, muestrasDescriptors);  
+
     const distance = respuesta.distance;
     console.log(respuesta);
 
@@ -100,7 +88,6 @@ funciones.addEnter = async (req, res) => {
             };
             i++;
         };
-
         res.json({
             data: name,
             id : id,
